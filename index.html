@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!-- 493 WARNING
+     note that the following CDN links
+     will work only when you have internet access
+     It incldues
+     jQuery
+     bootstrap
+     and
+     angular.js
+     note that jQuery is added to enable bootstrap.
+     You should NOT use jQuery.
+   -->
+
+<html lang="en-US">
+<head>
+  <title> 493 Artist Search</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="script.js"></script>
+  </title>
+</head>
+<style>
+
+.hot{
+  background-image: url(hot.png);
+  background-size: 18px 20px;
+  background-repeat: no-repeat;
+  padding-left: 20px;
+}
+
+h5{
+  padding-bottom: 5px;
+  padding-top: 3px;
+}
+
+.genre{
+  border:solid 2px;
+  border-radius: 3px;
+  margin:5px;
+  white-space: nowrap;
+  background-color:#ccc;
+  padding:2px;
+}
+
+</style>
+<body ng-app = "493Search">
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+       <h3>493 Artist Search</h3>
+    </div>
+  </div>
+</nav>
+<div class = "container" ng-controller="searchResult">
+  <div class = "row searchbar" >
+    <div class = "col-lg-12 col-md-12 col-sm-12">
+      <h4>Enter the name of the artist and enter : </h4>
+      <input type="text" ng-model="search_result" ng-keyup="onKeyEnter()">
+    </div>
+  </div>
+  <div class = "row">
+    <div class = "col-lg-12 col-md-12 col-sm-12">
+      <h4>Search Result (Total {{results.length}} found.)</h4>
+      <!-- Bonus task 1 goes here-->
+      <h4>
+        Click to see the detail.
+      </h4>
+    </div>
+  </div>
+  <div class = "row">
+    <div class = "col-lg-3 col-md-3 col-sm-3" ng-repeat="x in results">
+      <div data-toggle="modal" data-target="#{{x.id}}" style="height:250px;overflow:hidden" >
+        <h5 ng-show="x.popularity > 50 " class= "hot">
+          {{x.name.length > 22 ? x.name.substring(0, 22) + "...": x.name }}
+        </h5>
+        <h5 ng-hide="x.popularity > 50 ">
+          {{x.name.length > 22 ? x.name.substring(0, 22) + "...": x.name }}
+        </h5>
+        <div >
+          <img src= "{{x.images.length != 0 ? x.images[0].url : &quot;noimage.jpg&quot; }}" style="max-width:100%; max-height:200px">
+        </div>
+      </div>
+      <div id="{{x.id}}" class="modal fade" role = "dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss = "modal">&times;</button><!-- close icon-->
+              <h4 id = "{{x.id}}_name" class="modal-title">{{x.name}}</h4>
+            </div>
+            <div class="modal-body" >
+              <a href ="{{x.external_urls.spotify}}" class = "btn btn-default"> Open in Spotify</a>
+              <h5> Follower: {{x.followers.total}}</h5>
+              <h5> Genre: {{x.genres.join(', ')}}</span></h5>
+              <h5> Popularity: {{x.popularity}}</h5>
+              <img src="{{x.images.length != 0 ? x.images[0].url : &quot;noimage.jpg&quot; }}" style="max-width:100%; max-height:400px">
+            </div>
+            <div class="modal-footer" ng-controller= "similarArtistsCtrl">
+              <div>
+                <button type="button" class="btn btn-default" ng-click="simArtists(x.id)" ng-show="!clicked">Get Similar Artists</button>
+              </div>
+              <div class = "similar-artists">
+                <!-- your code goes here regarding similar artists ajax call -->
+                <div class = "row">
+                  <div class = "col-lg-3 col-md-3 col-sm-3" ng-repeat="y in sa_results">
+                     <div data-toggle="modal" data-target="#{{y.id}}" style="height:250px;overflow:hidden" >
+                      <h5>{{y.name.length > 12 ? y.name.substring(0, 12) + "...": y.name }}</h5>
+                      
+                      <div>
+                        <img src= "{{y.images.length != 0 ? y.images[0].url : &quot;noimage.jpg&quot; }}" style="max-width: 100%; max-height:250px">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <br>
+                <button type="button" class="btn btn-default" data-dismiss = "modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end of myModal-->
+    </div>
+  </div><!-- end of row-->
+</div> <!-- end of container --> 
+</body>
+</html>
